@@ -13,6 +13,13 @@
       "subtitle": "DevDocs",
       "description": "Search through DevDocs documentation sets from Raycast",
       "mode": "view"
+    },
+    {
+      "name": "docsets",
+      "title": "Config Documentation Docsets",
+      "subtitle": "DevDocs",
+      "description": "Config DevDocs documentation sets from Raycast",
+      "mode": "view"
     }
   ],
   "dependencies": {
