@@ -1,19 +1,12 @@
-import { useState, Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { Doc } from "../types";
-import { LocalStorage } from "@raycast/api";
+import useLocalStorage from "./useLocalStorage";
 
 export default function useDocsets(): [string[], Dispatch<SetStateAction<Doc>>] {
-  const [docsets, setDocsets] = useState<string[]>([]);
-  useEffect(() => {
-    LocalStorage.getItem<string>('docsets').then(v => {
-      if (v) {
-        setDocsets(JSON.parse(v));
-      }
-    });
-  }, []);
-
+  const [docsets, setDocsets] = useLocalStorage<string[]>('docsets', []);
   function toggle(doc: SetStateAction<Doc>) {
     const { slug } = doc as Doc;
+    console.log(slug)
     setDocsets(list => {
       const set = new Set(list);
       if (set.has(slug)) {
@@ -22,7 +15,6 @@ export default function useDocsets(): [string[], Dispatch<SetStateAction<Doc>>] 
         set.add(slug);
       }
       const newList = [...set];
-      LocalStorage.setItem('docsets', JSON.stringify(newList));
       return newList;
     });
   }
