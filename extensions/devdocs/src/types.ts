@@ -7,6 +7,7 @@ export interface Doc {
   release: string;
   mtime: number;
   db_size: number;
+  enabled: boolean;
 }
 
 export interface Links {

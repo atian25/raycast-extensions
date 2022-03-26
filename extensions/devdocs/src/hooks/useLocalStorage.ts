@@ -14,7 +14,7 @@ export default function useLocalStorage<T>(key: string, initialValue: T): [T, Di
 
   function setStateAndLocalStorage(value: SetStateAction<T>) {
     LocalStorage.setItem(key, JSON.stringify(value));
-    setState(value);
+    setState(value => value);
   }
 
   return [state, setStateAndLocalStorage];
