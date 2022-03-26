@@ -12,7 +12,7 @@ export default function useLocalStorage<T>(key: string, initialValue: T): [T, Di
     });
   }, []);
 
-  const setStateAndLocalStorage = useCallback((updater: SetStateAction<T> | (() => SetStateAction<T>)) => {
+  const setStateAndLocalStorage = useCallback((updater: SetStateAction<T>) => {
     setState(state => {
       const newValue = typeof updater === 'function' ? updater(state) : updater;
       LocalStorage.setItem(key, JSON.stringify(newValue));

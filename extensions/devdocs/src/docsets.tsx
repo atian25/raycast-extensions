@@ -4,7 +4,6 @@ import { useFetchWithCache, useDocsets } from "./hooks";
 import { faviconUrl } from "./utils";
 import { Doc } from "./types";
 import { Action, ActionPanel, Icon, List, popToRoot } from "@raycast/api";
-import { useState } from "react";
 
 
 export default function DocList(): JSX.Element {
@@ -14,39 +13,46 @@ export default function DocList(): JSX.Element {
   const list = data?.map(doc => {
     doc.enabled = docsets.includes(doc.slug);
     return doc;
-  }).sort(a => a.enabled ? -1 : 1);
+  });
 
   return (
     <List isLoading={(!data && !data) || isLoading} >
-      {list?.map((doc) => (
-        <DocItem key={doc.slug} doc={doc} isEnabled={docsets.indexOf(doc.slug) !== -1} onEnter={() => toggleDocset(doc)} />
-      ))}
+      <List.Section title="Installed Docsets">
+        {list?.filter(x => x.enabled).map((doc) => (
+          <DocItem key={doc.slug} doc={doc} onAction={() => toggleDocset(doc)} />
+        ))}
+      </List.Section>
+
+      <List.Section title="Available Docsets">
+        {list?.map((doc) => (
+          <DocItem key={doc.slug} doc={doc} onAction={() => toggleDocset(doc)} />
+        ))}
+      </List.Section>
     </List>
   );
 }
 
-function DocItem(props: { doc: Doc; isEnabled: boolean, onEnter: () => void }) {
-  const { doc, isEnabled, onEnter } = props;
+function DocItem(props: { doc: Doc; onAction: () => void }) {
+  const { doc, onAction } = props;
   const { name, slug, links, version, release, enabled } = doc;
   const icon = links?.home ? faviconUrl(64, links.home) : Icon.Dot;
   return (
     <List.Item
       key={slug}
-      title={`${name}`}
+      title={name}
       icon={icon}
-      subtitle={`${version}`}
+      subtitle={version}
       keywords={[release]}
-      // accessoryTitle={release}
-      accessoryTitle={`${enabled ? '✅' : ''} ${release}`}
+      accessoryTitle={release}
       actions={
         <ActionPanel>
           <ActionPanel.Section>
-            <Action title={isEnabled ? "Uninstall Docset" : "install Docset"} onAction={onEnter} />
+            <Action title={enabled ? "Uninstall Docset" : "Install Docset"} onAction={onAction} />
             {/* <PushAction
               title="Browse Entries"
               icon={Icon.ArrowRight}
               target={<EntryList doc={doc} icon={icon} />}
-              onPush={onEnter}
+              onPush={onAction}
             /> */}
           </ActionPanel.Section>
           <ActionPanel.Section>
