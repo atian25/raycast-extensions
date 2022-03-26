@@ -1,7 +1,7 @@
 import { LocalStorage } from "@raycast/api";
-import { Dispatch, SetStateAction, useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 
-export default function useLocalStorage<T>(key: string, initialValue: T): [T, Dispatch<SetStateAction<T>>] {
+export default function useLocalStorage<T>(key: string, initialValue: T): [T, (v: T) => void] {
   const [state, setState] = useState<T>(initialValue);
 
   useEffect(() => {
@@ -12,13 +12,10 @@ export default function useLocalStorage<T>(key: string, initialValue: T): [T, Di
     });
   }, []);
 
-  const setStateAndLocalStorage = useCallback((updater: SetStateAction<T>) => {
-    setState(state => {
-      const newValue = typeof updater === 'function' ? updater(state) : updater;
-      LocalStorage.setItem(key, JSON.stringify(newValue));
-      return newValue;
-    });
-  }, []);
+  const setStateAndLocalStorage = (value: T) => {
+    LocalStorage.setItem(key, JSON.stringify(value));
+    setState(value);
+  };
 
   return [state, setStateAndLocalStorage];
 }
