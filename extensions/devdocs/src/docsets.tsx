@@ -8,22 +8,21 @@ import { Action, ActionPanel, Icon, List, popToRoot } from "@raycast/api";
 
 export default function DocList(): JSX.Element {
   const { data, isLoading } = useFetchWithCache<Doc[]>(`${DEVDOCS_BASE_URL}/docs/docs.json`, "index.json");
-  const [docsets, setDocsets] = useDocsets();
+  const [docsets, toggleDocset] = useDocsets();
 
+  console.log('@@docsets', docsets);
   const enabledList = data?.filter(doc => docsets.indexOf(doc.slug) !== -1);
-
-  console.log('@@enabledList', docsets);
 
   return (
     <List isLoading={(!data && !data) || isLoading}>
-      <List.Section title="Enabled">
+      <List.Section title="Installed Docsets">
         {enabledList?.map((doc) => (
-          <DocItem key={doc.slug} doc={doc} isEnabled={true} onEnter={() => setDocsets(doc)} />
+          <DocItem key={doc.slug} doc={doc} isEnabled={true} onEnter={() => toggleDocset(doc)} />
         ))}
       </List.Section>
-      <List.Section title="Available">
+      <List.Section title="Available Docsets">
         {data?.map((doc) => (
-          <DocItem key={doc.slug} doc={doc} isEnabled={docsets.indexOf(doc.slug) !== -1} onEnter={() => setDocsets(doc)} />
+          <DocItem key={doc.slug} doc={doc} isEnabled={docsets.indexOf(doc.slug) !== -1} onEnter={() => toggleDocset(doc)} />
         ))}
       </List.Section>
     </List>
