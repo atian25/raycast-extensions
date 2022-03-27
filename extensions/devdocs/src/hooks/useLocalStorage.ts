@@ -10,7 +10,7 @@ export default function useLocalStorage<T>(key: string, initialValue: T): [T, (v
         setState(JSON.parse(v));
       }
     });
-  }, []);
+  }, [key]);
 
   const setStateAndLocalStorage = (value: T) => {
     LocalStorage.setItem(key, JSON.stringify(value));

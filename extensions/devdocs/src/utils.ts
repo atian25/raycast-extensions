@@ -1,4 +1,7 @@
-import { Icon } from "@raycast/api";
+import { environment, Icon } from "@raycast/api";
+import fetch, { FetchOptions } from "make-fetch-happen";
+import { resolve } from "path";
+import { DEVDOCS_BASE_URL } from "./constants";
 
 export function faviconUrl(size: number, url: string): string {
   try {
@@ -7,4 +10,11 @@ export function faviconUrl(size: number, url: string): string {
   } catch (err) {
     return Icon.Globe;
   }
+}
+
+export async function fetchData<T>(url: string, options: FetchOptions = {}): Promise<T> {
+  const cachePath = resolve(environment.supportPath, 'http-cache');
+  const res = await fetch(`${DEVDOCS_BASE_URL}/${url}`, { cachePath, ...options });
+  const result = res.json();
+  return result as T;
 }

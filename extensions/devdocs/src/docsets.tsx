@@ -1,30 +1,45 @@
 
+import { Action, ActionPanel, Icon, List, popToRoot, showToast, Toast } from "@raycast/api";
+import { useEffect, useState } from "react";
 import { DEVDOCS_BASE_URL } from "./constants";
-import { useFetchWithCache, useDocsets } from "./hooks";
+import { useInstalledDocsets } from "./hooks";
 import { faviconUrl } from "./utils";
 import { Doc } from "./types";
-import { Action, ActionPanel, Icon, List, popToRoot } from "@raycast/api";
-
+import { fetchData } from "./utils";
 
 export default function DocList(): JSX.Element {
-  const { data, isLoading } = useFetchWithCache<Doc[]>(`${DEVDOCS_BASE_URL}/docs/docs.json`, "index.json");
-  const [docsets, toggleDocset] = useDocsets();
+  const [docsets, setDocsets] = useState<Doc[]>();
+  const [isLoading, setIsLoading] = useState(true);
+  const [installedDocsets, toggleDocset] = useInstalledDocsets();
 
-  const list = data?.map(doc => {
-    doc.enabled = docsets.includes(doc.slug);
-    return doc;
-  });
+  useEffect(() => {
+    async function fetchDocsets() {
+      setIsLoading(true);
+      try {
+        const data = await fetchData<Doc[]>('docs/docs.json');
+        const installed = installedDocsets.map(doc => doc.slug);
+        data.forEach(doc => { doc.enabled = installed.includes(doc.slug) });
+        setDocsets(data);
+      } catch (error) {
+        console.error(error);
+        showToast(Toast.Style.Failure, "Could not refresh cache!", "Please Check your connection.");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchDocsets();
+  }, []);
 
   return (
-    <List isLoading={(!data && !data) || isLoading} >
+    <List isLoading={isLoading} >
       <List.Section title="Installed Docsets">
-        {list?.filter(x => x.enabled).map((doc) => (
+        {installedDocsets.map((doc) => (
           <DocItem key={doc.slug} doc={doc} onAction={() => toggleDocset(doc)} />
         ))}
       </List.Section>
 
       <List.Section title="Available Docsets">
-        {list?.map((doc) => (
+        {docsets?.map((doc) => (
           <DocItem key={doc.slug} doc={doc} onAction={() => toggleDocset(doc)} />
         ))}
       </List.Section>
@@ -48,12 +63,6 @@ function DocItem(props: { doc: Doc; onAction: () => void }) {
         <ActionPanel>
           <ActionPanel.Section>
             <Action title={enabled ? "Uninstall Docset" : "Install Docset"} onAction={onAction} />
-            {/* <PushAction
-              title="Browse Entries"
-              icon={Icon.ArrowRight}
-              target={<EntryList doc={doc} icon={icon} />}
-              onPush={onAction}
-            /> */}
           </ActionPanel.Section>
           <ActionPanel.Section>
             <Action.OpenInBrowser url={`${DEVDOCS_BASE_URL}/${slug}`} onOpen={() => popToRoot()} />

@@ -25,11 +25,13 @@
   "dependencies": {
     "@raycast/api": "^1.31.0",
     "fuse.js": "^6.4.6",
+    "make-fetch-happen": "^10.1.0",
     "node-fetch": "^3.0.0",
     "open": "^8.2.1",
     "swr": "^1.0.1"
   },
   "devDependencies": {
+    "@types/make-fetch-happen": "^9.0.2",
     "@types/node": "^16.4.3",
     "@types/node-fetch": "^2.5.12",
     "@types/react": "^17.0.15",
