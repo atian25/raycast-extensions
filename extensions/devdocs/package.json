@@ -26,7 +26,6 @@
     "@raycast/api": "^1.31.0",
     "fuse.js": "^6.4.6",
     "make-fetch-happen": "^10.1.0",
-    "node-fetch": "^3.0.0",
     "open": "^8.2.1",
     "swr": "^1.0.1"
   },

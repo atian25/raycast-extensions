@@ -1,5 +1,5 @@
-import useFetchWithCache from "./useFetchWithCache";
 import useLocalStorage from "./useLocalStorage";
 import useInstalledDocsets from "./useInstalledDocsets";
+import useFuse from "./useFuse";
 
-export { useFetchWithCache, useLocalStorage, useInstalledDocsets };
+export { useLocalStorage, useInstalledDocsets, useFuse };

@@ -12,9 +12,8 @@ export function faviconUrl(size: number, url: string): string {
   }
 }
 
-export async function fetchData<T>(url: string, options: FetchOptions = {}): Promise<T> {
+export async function fetchData<T>(url: string, options?: FetchOptions): Promise<T> {
   const cachePath = resolve(environment.supportPath, 'http-cache');
-  const res = await fetch(`${DEVDOCS_BASE_URL}/${url}`, { cachePath, ...options });
-  const result = res.json();
-  return result as T;
+  const res = await fetch(`${DEVDOCS_BASE_URL}/${url}`, { cachePath, ...options } as FetchOptions);
+  return res.json() as Promise<T>;
 }

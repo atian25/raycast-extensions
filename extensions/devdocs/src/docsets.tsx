@@ -6,6 +6,7 @@ import { useInstalledDocsets } from "./hooks";
 import { faviconUrl } from "./utils";
 import { Doc } from "./types";
 import { fetchData } from "./utils";
+import { OpenInDevdocsAction } from "./actions";
 
 export default function DocList(): JSX.Element {
   const [docsets, setDocsets] = useState<Doc[]>();
@@ -66,7 +67,7 @@ function DocItem(props: { doc: Doc; onAction: () => void }) {
           </ActionPanel.Section>
           <ActionPanel.Section>
             <Action.OpenInBrowser url={`${DEVDOCS_BASE_URL}/${slug}`} onOpen={() => popToRoot()} />
-            {/* <OpenInDevdocsAction url={`${DEVDOCS_BASE_URL}/${slug}`} onOpen={() => popToRoot()} /> */}
+            <OpenInDevdocsAction url={`${DEVDOCS_BASE_URL}/${slug}`} onOpen={() => popToRoot()} />
             {links?.home ? (
               <Action.OpenInBrowser title="Open Project Homepage" url={links.home} onOpen={() => popToRoot()} />
             ) : null}
