@@ -6,6 +6,10 @@
   "description": "Search through DevDocs documentation sets from Raycast.",
   "icon": "devdocs.png",
   "author": "pomdtr",
+  "contributors": [
+    "pomdtr",
+    "atian25"
+  ],
   "commands": [
     {
       "name": "index",

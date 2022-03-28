@@ -50,7 +50,7 @@ export default function DocList(): JSX.Element {
 function DocItem(props: { doc: Doc; onAction: () => void }) {
   const { doc, onAction } = props;
   const { name, slug, links, version, release, enabled } = doc;
-  const icon = links?.home ? faviconUrl(64, links.home) : Icon.Dot;
+  const icon = links?.home ? faviconUrl(64, links.home) : Icon.Document;
   return (
     <List.Item
       key={slug}
