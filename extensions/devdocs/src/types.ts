@@ -1,3 +1,5 @@
+import { Image } from "@raycast/api";
+
 export interface Doc {
   name: string;
   slug: string;
@@ -15,15 +17,15 @@ export interface Links {
   code?: string;
 }
 
-export interface Index {
-  entries: Entry[];
-  types: Type[];
-}
-
 export interface Entry {
   name: string;
   path: string;
   type: string;
+}
+
+export interface EntryDetail extends Entry {
+  doc: Doc;
+  icon: Image.ImageLike;
 }
 
 export interface Type {

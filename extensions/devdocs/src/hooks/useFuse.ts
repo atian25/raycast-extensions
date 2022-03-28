@@ -8,7 +8,7 @@ export default function useFuse<U>(
 ): [U[], Dispatch<SetStateAction<string | Record<string, unknown>>>] {
   const [query, setQuery] = useState<string | Record<string, unknown>>("");
   const fuse = useMemo(() => {
-    return new Fuse(items || [], options);
+    return new Fuse(items || [], { isCaseSensitive: true, ...options });
   }, [items]);
 
   if (!query) return [(items || []).slice(0, limit), setQuery];

@@ -1,12 +1,11 @@
 
-import { Action, ActionPanel, Icon, List, popToRoot, showToast, Toast } from "@raycast/api";
+import { Action, ActionPanel, Icon, List, showToast, Toast } from "@raycast/api";
 import { useEffect, useState } from "react";
-import { DEVDOCS_BASE_URL } from "./constants";
 import { useInstalledDocsets } from "./hooks";
 import { faviconUrl } from "./utils";
 import { Doc } from "./types";
 import { fetchData } from "./utils";
-import { OpenInDevdocsAction } from "./actions";
+import { OpenInDevdocs, OpenInBrowser } from "./actions";
 
 export default function DocList(): JSX.Element {
   const [docsets, setDocsets] = useState<Doc[]>();
@@ -66,13 +65,13 @@ function DocItem(props: { doc: Doc; onAction: () => void }) {
             <Action title={enabled ? "Uninstall Docset" : "Install Docset"} onAction={onAction} />
           </ActionPanel.Section>
           <ActionPanel.Section>
-            <Action.OpenInBrowser url={`${DEVDOCS_BASE_URL}/${slug}`} onOpen={() => popToRoot()} />
-            <OpenInDevdocsAction url={`${DEVDOCS_BASE_URL}/${slug}`} onOpen={() => popToRoot()} />
+            <OpenInBrowser url={slug} />
+            <OpenInDevdocs url={slug} />
             {links?.home ? (
-              <Action.OpenInBrowser title="Open Project Homepage" url={links.home} onOpen={() => popToRoot()} />
+              <OpenInBrowser title="Open Project Homepage" url={links.home} host={false} />
             ) : null}
             {links?.code ? (
-              <Action.OpenInBrowser title="Open Code Repository" url={links.code} onOpen={() => popToRoot()} />
+              <OpenInBrowser title="Open Code Repository" url={links.code} host={false} />
             ) : null}
           </ActionPanel.Section>
         </ActionPanel>

@@ -1,77 +1,13 @@
-import { Action, ActionPanel, Icon, Image, List, popToRoot, showToast, Toast } from "@raycast/api";
-import { useEffect, useState } from "react";
-import { OpenInDevdocsAction } from "./actions";
+import { ActionPanel, List } from "@raycast/api";
+import { OpenInDevdocs, OpenInBrowser } from "./actions";
 import { DEVDOCS_BASE_URL } from "./constants";
-import { useInstalledDocsets, useFuse } from "./hooks";
-import { Doc, Entry } from "./types";
-import { faviconUrl, fetchData } from "./utils";
-
-interface EntryWithDoc extends Entry {
-  doc: Doc;
-  icon: Image.ImageLike;
-}
-
-interface QueryOptions {
-  str?: string;
-  slug?: string;
-}
+import { useInstalledDocsets, useEntryList, useSearchResult } from "./hooks";
+import { Doc, EntryDetail } from "./types";
 
 export default function EntryList(): JSX.Element {
   const [installedDocsets] = useInstalledDocsets();
-  const [list, setList] = useState<EntryWithDoc[]>();
-  const [isLoading, setIsLoading] = useState(true);
-  const [queryOptions, setQueryOptions] = useState<QueryOptions>({});
-  const [results, search] = useFuse(list, { keys: ["name", "type", "doc.slug"] }, 500);
-
-  function filterFn(q: QueryOptions) {
-    const opts = { ...queryOptions, ...q };
-    setQueryOptions(opts);
-
-    const query: Record<string, unknown>[] = [];
-
-    if (opts.slug) {
-      query.push({
-        $path: "doc.slug",
-        $val: opts.slug,
-      });
-    }
-
-    if (opts.str) {
-      query.push({
-        $or: [
-          { name: opts.str },
-          { type: opts.str }
-        ]
-      });
-    }
-
-    search(query.length ? { $and: query } : '');
-  }
-
-  useEffect(() => {
-    async function fetchEntryList() {
-      setIsLoading(true);
-      try {
-        const apis = await Promise.all(installedDocsets.map(async doc => {
-          const data = await fetchData<{ entries: EntryWithDoc[] }>(`docs/${doc.slug}/index.json`);
-          data.entries.forEach(entry => {
-            entry.doc = doc;
-            entry.icon = doc.links?.home ? faviconUrl(64, doc.links.home) : Icon.Dot;
-            entry.path = entry.path?.replace(/"/g, '');
-          });
-          return data.entries;
-        }));
-
-        setList(apis.flat());
-      } catch (error) {
-        console.error(error);
-        showToast(Toast.Style.Failure, "Could not refresh cache!", "Please Check your connection");
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchEntryList();
-  }, [installedDocsets]);
+  const [list, isLoading] = useEntryList(installedDocsets);
+  const [results, filterFn] = useSearchResult(list);
 
   return (
     <List
@@ -94,7 +30,7 @@ export default function EntryList(): JSX.Element {
   );
 };
 
-function EntryItem(props: { entry: EntryWithDoc; }) {
+function EntryItem(props: { entry: EntryDetail; }) {
   const { entry, entry: { doc } } = props;
   return (
     <List.Item
@@ -110,8 +46,8 @@ function EntryItem(props: { entry: EntryWithDoc; }) {
       keywords={[entry.type].concat(entry.name.split("."))}
       actions={
         <ActionPanel>
-          <Action.OpenInBrowser url={`${DEVDOCS_BASE_URL}/${doc.slug}/${entry.path}`} onOpen={() => popToRoot()} />
-          <OpenInDevdocsAction url={`${DEVDOCS_BASE_URL}/${entry.doc.slug}/${entry.path}`} onOpen={() => popToRoot()} />
+          <OpenInBrowser url={`${doc.slug}/${entry.path}`} />
+          <OpenInDevdocs url={`${entry.doc.slug}/${entry.path}`} />
         </ActionPanel>
       }
     />
